@@ -44,7 +44,7 @@
 </thead>
 <!-- 表のボディ -->
 <tbody>
-<% @nutrients.each do |nutrient| %>
+<% @nutrients.each.with_index(0) do |nutrient, i| %>
   <tr>
     <td><%= nutrient.name %></td>
     <td>100</td>
@@ -54,7 +54,7 @@
     <td>100</td>
     <td><%= nutrient.unit %></td>
 <% @foods.each do |food| %>
-    <td><%= food.getNutrition(nutrient.id)%></td>
+    <td><%= food.getNutrition(i)%></td>
     <td><%= nutrient.unit %></td>
 <% end %>
   </tr>
