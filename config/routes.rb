@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root 'calc_nutrition#show'
   get 'calc_nutrition/show'
 
   # The priority is based upon order of creation: first created -> highest priority.
