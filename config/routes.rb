@@ -2,8 +2,8 @@ Rails.application.routes.draw do
   root 'calc_nutrition#show'
   post 'calc_nutrition/show', to: 'calc_nutrition#show'
   get 'calc_nutrition/show', to: 'calc_nutrition#show'
-  post 'calc_nutrition/updateTarget', to: 'calc_nutrition#updateTarget'
-  get 'calc_nutrition/updateTarget', to: 'calc_nutrition#updateTarget'
+  post 'calc_nutrition/update', to: 'calc_nutrition#update'
+  get 'calc_nutrition/update', to: 'calc_nutrition#update'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

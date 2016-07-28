@@ -8,8 +8,7 @@
 </head>
 <body>
 <h1>人力そいれんと</h1>
-<h2>Nutrition Facts</h2>
-<%= form_tag :action => 'updateTarget' do %>
+<%= form_tag :action => 'update' do %>
 <p>
   <%= select_tag "term", options_for_select([["１", 1], ["２", 2], ["３", 3], ["４", 4], ["５", 5], ["６", 6], ["７", 7], ["８", 8], ["９", 9], ["１０", 10]], :selected => @term, :id => 'hoge') %>
   日間で
@@ -19,8 +18,8 @@
   <%= select_tag 'percent', options_for_select([["１０", 10], ["２０", 20], ["３０", 30], ["４０", 40], ["５０", 50], ["６０", 60], ["７０", 70], ["８０", 80], ["９０", 90], ["１００", 100]], :selected => @percent) %>
   %を摂る
 </p>
-<%= submit_tag "目標を更新" %>
-<% end %>
+<%= submit_tag "更新" %>
+<h2>Nutrition Facts</h2>
 <table border="2" rules="groups">
 <!-- 列のグループ(span)、属性を設定 -->
 <colgroup></colgroup>
@@ -34,7 +33,7 @@
 <thead>
   <tr>
     <th colspan="1" rowspan="3">nutrition</th>
-    <th colspan="2" rowspan="3">s / n</th>
+    <th colspan="2" rowspan="3">％</th>
     <th colspan="2" rowspan="3">need</th>
     <th colspan="2" rowspan="3">supply</th>
 <% @foods.each do |food| %>
@@ -49,7 +48,7 @@
   </tr>
   <tr>
 <% @foods.each do |food| %>
-    <td>100</td>
+    <td><%= number_field_tag 'quantities[]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100</td>
     <td>g</td>
 <% end %>
   </tr>
@@ -59,23 +58,25 @@
 <% @nutrients.each.with_index(0) do |nutrient, i| %>
   <tr>
     <td><%= nutrient.name %></td>
-    <!-- s / n -->
-    <td><%= (@sumArr[i] / nutrient.quantity * 100).to_i %></td>
+    <!-- ％ -->
+    <td><%= (@sums[i] / nutrient.quantity * 100).to_i %></td>
     <td>%</td>
     <!-- need -->
-    <td class="nQuantity"><%= @needArr[i] %></td>
+    <td class="nQuantity"><%= @needs[i] %></td>
     <td><%= nutrient.unit %></td>
     <!-- supply -->
-    <td><%= @sumArr[i]%></td>
+    <td><%= @sums[i]%></td>
     <td><%= nutrient.unit %></td>
-<% @foods.each do |food| %>
-    <td><%= food.getNutrition(i)%></td>
+<% @foods.each.with_index(0) do |food, j| %>
+    <td><%= (food.getNutrition(i) * food.quantity).round(1) %></td>
     <td><%= nutrient.unit %></td>
 <% end %>
   </tr>
 <% end %>
 </tbody>
 </table>
+<%= submit_tag "更新" %>
+<% end %>
 <%= yield %>
 </body>
 </html>
