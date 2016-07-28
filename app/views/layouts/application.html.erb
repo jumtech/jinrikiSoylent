@@ -1,14 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JinrikiSoylent</title>
+  <title>人力そいれんと</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
+<h1>人力そいれんと</h1>
+<h2>Nutrition Facts</h2>
+<%= form_tag :action => 'updateTarget' do %>
+<p>
+  <%= select_tag "term", options_for_select([["１", 1], ["２", 2], ["３", 3], ["４", 4], ["５", 5], ["６", 6], ["７", 7], ["８", 8], ["９", 9], ["１０", 10]], :selected => @term, :id => 'hoge') %>
+  日間で
+</p>
+<p id="hoge">
+  必要な栄養素量の
+  <%= select_tag 'percent', options_for_select([["１０", 10], ["２０", 20], ["３０", 30], ["４０", 40], ["５０", 50], ["６０", 60], ["７０", 70], ["８０", 80], ["９０", 90], ["１００", 100]], :selected => @percent) %>
+  %を摂る
+</p>
+<%= submit_tag "目標を更新" %>
+<% end %>
+<table border="2" rules="groups">
+<!-- 列のグループ(span)、属性を設定 -->
+<colgroup></colgroup>
+<colgroup span="2"></colgroup>
+<colgroup span="2"></colgroup>
+<colgroup span="2"></colgroup>
+<colgroup span="2"></colgroup>
+<colgroup span="2"></colgroup>
+<colgroup span="2"></colgroup>
+<!-- 表のヘッダ -->
+<thead>
+  <tr>
+    <th colspan="1" rowspan="3">nutrition</th>
+    <th colspan="2" rowspan="3">s / n</th>
+    <th colspan="2" rowspan="3">need</th>
+    <th colspan="2" rowspan="3">supply</th>
+<% @foods.each do |food| %>
+    <th colspan="2" rowspan="1"><%= food.name%></th>
+<% end %>
+  </tr>
+  <tr>
+<% @foods.each do |food| %>
+    <td>1</td>
+    <td><%= food.unit%></td>
+<% end %>
+  </tr>
+  <tr>
+<% @foods.each do |food| %>
+    <td>100</td>
+    <td>g</td>
+<% end %>
+  </tr>
+</thead>
+<!-- 表のボディ -->
+<tbody>
+<% @nutrients.each.with_index(0) do |nutrient, i| %>
+  <tr>
+    <td><%= nutrient.name %></td>
+    <!-- s / n -->
+    <td><%= (@sumArr[i] / nutrient.quantity * 100).to_i %></td>
+    <td>%</td>
+    <!-- need -->
+    <td class="nQuantity"><%= @needArr[i] %></td>
+    <td><%= nutrient.unit %></td>
+    <!-- supply -->
+    <td><%= @sumArr[i]%></td>
+    <td><%= nutrient.unit %></td>
+<% @foods.each do |food| %>
+    <td><%= food.getNutrition(i)%></td>
+    <td><%= nutrient.unit %></td>
+<% end %>
+  </tr>
+<% end %>
+</tbody>
+</table>
 <%= yield %>
-
 </body>
 </html>
