@@ -59,7 +59,9 @@
   <tr>
     <td><%= nutrient.name %></td>
     <!-- ％ -->
-    <td class="<%= @status[i]%>"><%= (@supplies[i] / nutrient.quantity * 100).to_i %></td>
+    <td class="<%= @status[i]%>">
+      <%= (@supplies[i] / @needs[i] * 100).to_i %>
+    </td>
     <td>%</td>
     <!-- need -->
     <td><%= @needs[i] %></td>
