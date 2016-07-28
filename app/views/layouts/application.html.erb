@@ -32,20 +32,28 @@
 <!-- 表のヘッダ -->
 <thead>
   <tr>
+    <!--
     <th colspan="1" rowspan="3">nutrition</th>
     <th colspan="2" rowspan="3">％</th>
     <th colspan="2" rowspan="3">need</th>
     <th colspan="2" rowspan="3">supply</th>
+  -->
+    <th colspan="1" rowspan="2">nutrition</th>
+    <th colspan="2" rowspan="2">％</th>
+    <th colspan="2" rowspan="2">need</th>
+    <th colspan="2" rowspan="2">supply</th>
 <% @foods.each do |food| %>
     <th colspan="2" rowspan="1"><%= food.name%></th>
 <% end %>
   </tr>
+<!--
   <tr>
 <% @foods.each do |food| %>
     <td>1</td>
     <td><%= food.unit%></td>
 <% end %>
   </tr>
+-->
   <tr>
 <% @foods.each do |food| %>
     <td><%= number_field_tag 'quantities[]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100</td>
@@ -80,5 +88,29 @@
 <%= submit_tag "更新" %>
 <% end %>
 <%= yield %>
+<h2>What is 人力そいれんと？</h2>
+<p>『人力そいれんと』は、ソイレントと同じ栄養素量を普通の食材から摂ることを目的としたツールです。</p>
+<h2>使い方</h2>
+<ol>
+  <li>ソイレント何日分×何％分の栄養素量を摂りたいかを選びます</li>
+  <li>食べる食材の量を選びます</li>
+  <li>更新ボタンを押します</li>
+  <li>栄養素ごとに、必要量（need）と、選んだ食材からの供給量（supply）が表示されます</li>
+  <li>needに対するsupplyの割合が、％欄に表示されます</li>
+  <li>100％に満たない栄養素は、赤く表示されます</li>
+  <li>すべての栄養素を100%（青表示）にするように、食材の量を加減します</li>
+</ul>
+<h2>使い方のヒント</h2>
+<ul>
+  <li>
+    食べる食材の量をすべて計算することは難しいです。実際に食材を買って家で調理する分など、自分が食材の種類や量をコントロールできる食事について、計算しましょう
+  </li>
+  <li>
+    例えば、昼食はいつも外食で、朝食や夕食のみ自宅で調理して食べる場合、目標を100％から70〜80％に下げて、朝と夕に食べる食材だけ計算しましょう。残りの栄養素は、昼食で摂っていることにします。昼食で何を食べるかは、コントロールできないので計算しません
+  </li>
+  <li>
+    スーパーなどでまとめて食材を買う場合は、何日分をまとめ買いするかを決めます。それに合わせて、ソイレント何日分の栄養素量を摂るかを選択します
+  </li>
+</ul>
 </body>
 </html>

@@ -27,7 +27,7 @@ class CalcNutritionController < ApplicationController
       food.quantity = 1
     end
     @term = 1
-    @percent = 80
+    @percent = 100
     common()
   end
 
