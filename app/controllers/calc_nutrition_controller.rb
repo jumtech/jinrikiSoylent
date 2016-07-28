@@ -2,15 +2,21 @@ class CalcNutritionController < ApplicationController
 
   def common()
     @needs = []
-    @sums = []
+    @supplies = []
+    @status = []
     @nutrients.each.with_index(0) do |nutrient, i|
       need = nutrient.quantity * @term.to_i * @percent.to_i / 100
       @needs << need.round(1)
-      sum = 0
+       supply = 0
       @foods.each do |food|
-        sum += food.getNutrition(i)
+        supply += food.getNutrition(i) * food.quantity
       end
-      @sums << sum.round(1)
+      @supplies <<  supply.round(1)
+      if need >  supply
+        @status << "shortage"
+      else
+        @status << "enough"
+      end
     end
   end
 

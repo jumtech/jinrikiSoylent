@@ -7,7 +7,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<h1>人力そいれんと</h1>
+<h1><%= link_to "人力そいれんと", controller: "calc_nutrition", action: "show" %></h1>
 <%= form_tag :action => 'update' do %>
 <p>
   <%= select_tag "term", options_for_select([["１", 1], ["２", 2], ["３", 3], ["４", 4], ["５", 5], ["６", 6], ["７", 7], ["８", 8], ["９", 9], ["１０", 10]], :selected => @term, :id => 'hoge') %>
@@ -59,13 +59,13 @@
   <tr>
     <td><%= nutrient.name %></td>
     <!-- ％ -->
-    <td><%= (@sums[i] / nutrient.quantity * 100).to_i %></td>
+    <td class="<%= @status[i]%>"><%= (@supplies[i] / nutrient.quantity * 100).to_i %></td>
     <td>%</td>
     <!-- need -->
-    <td class="nQuantity"><%= @needs[i] %></td>
+    <td><%= @needs[i] %></td>
     <td><%= nutrient.unit %></td>
     <!-- supply -->
-    <td><%= @sums[i]%></td>
+    <td><%= @supplies[i]%></td>
     <td><%= nutrient.unit %></td>
 <% @foods.each.with_index(0) do |food, j| %>
     <td><%= (food.getNutrition(i) * food.quantity).round(1) %></td>
