@@ -1,2 +1,6 @@
 <p>update!</p>
-<p><%= @console %></p>
+<% @consoles.each do |c| %>
+<p>
+  <%= c %>
+</p>
+<% end %>

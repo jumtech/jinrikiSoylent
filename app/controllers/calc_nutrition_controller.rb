@@ -8,7 +8,7 @@ class CalcNutritionController < ApplicationController
       need = nutrient.quantity * @term.to_i * @percent.to_i / 100
       @needs << need.round(1)
        supply = 0
-      @foods.each do |food|
+      @currentFoods.each do |food|
         supply += food.getNutrition(i) * food.quantity
       end
       @supplies <<  supply.round(1)
@@ -23,28 +23,78 @@ class CalcNutritionController < ApplicationController
   def show
     @nutrients = Nutrient.all
     @foods = Food.all
-    @foods.each do |food|
-      food.quantity = 1
-    end
-    @term = 1
+    @currentFoods = []
+    @term = 5
     @percent = 100
     common()
   end
 
   def update
+    # DBからレコードを取得
     @nutrients = Nutrient.all
     @foods = Food.all
-    @term = params[:term]
-    @percent = params[:percent]
-    quantities = params[:quantities]
-    @foods.each.with_index(0) do |food, i|
-      if quantities == nil
+
+    # formからパラメタを取得
+    @term = params["form"]["term"]
+    if @term == nil
+      @term = 5
+    end
+
+    @percent = params["form"]["percent"]
+    if @percent == nil
+      @percent = 100
+    end
+
+    addedFoodId = params["form"]["addedFoodId"]
+    if addedFoodId == nil
+      addedFoodId = ""
+    end
+
+    quantities = params["quantities"]
+
+    currentFoodIds = params["form"]["currentFoodIds"]
+    if currentFoodIds == nil
+      currentFoodIds = []
+    end
+
+    # 現在の食材を用意
+    @currentFoods = []
+    if currentFoodIds.kind_of?(String)
+      @currentFoods << @foods.find(currentFoodIds)
+    else
+      currentFoodIds.each do |id|
+        @currentFoods << @foods.find(id)
+      end
+    end
+
+    # 各食材のquantityをパラメタ値で設定
+    if quantities == nil
+      @currentFoods.each.with_index(0) do |food, i|
         food.quantity = 1
-      else
+      end
+    else
+      @currentFoods.each.with_index(0) do |food, i|
         food.quantity = quantities[i].to_f
       end
     end
-    @console = "term=#{@term}, percent=#{@percent}, quantities=#{quantities}"
+
+    # 食材の追加
+    if addedFoodId != ""
+      if !(currentFoodIds.include?(addedFoodId))
+        addedFood = @foods.find(addedFoodId)
+        addedFood.quantity = 1
+        @currentFoods << addedFood
+      end
+    end
+
+    # DEBUG
+    @consoles = [
+      "@term=#{@term}",
+      "@percent=#{@percent}",
+      "quantities=#{quantities}",
+      "currentFoodIds=#{currentFoodIds}",
+      "@currentFoods=#{@currentFoods}"
+    ]
     common()
   end
 end
