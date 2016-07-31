@@ -9,13 +9,14 @@
 <body>
   <!-- タイトル -->
 <h1><%= link_to '人力そいれんと', controller: 'calc_nutrition', action: 'show' %></h1>
-<%= form_tag :action => 'update' do %>
+<%= form_tag "/calc_nutrition/update", id:"updateForm" do %>
+<%= hidden_field_tag "commit_value"%>
 <!-- 目標設定 -->
 <p>
   <%= select_tag 'form[term]', options_for_select([["１", 1], ["２", 2], ["３", 3], ["４", 4], ["５", 5], ["６", 6], ["７", 7], ["８", 8], ["９", 9], ["１０", 10]], :selected => @term, :id => 'hoge') %>
   日間で
 </p>
-<p id="hoge">
+<p>
   必要な栄養素量の
   <%= select_tag 'form[percent]', options_for_select([["１０", 10], ["２０", 20], ["３０", 30], ["４０", 40], ["５０", 50], ["６０", 60], ["７０", 70], ["８０", 80], ["９０", 90], ["１００", 100]], :selected => @percent) %>
   %を摂る
@@ -44,32 +45,24 @@
   <!-- 表のヘッダ -->
 <thead>
   <tr>
-    <!--
     <th colspan="1" rowspan="3">nutrition</th>
     <th colspan="2" rowspan="3">％</th>
     <th colspan="2" rowspan="3">need</th>
     <th colspan="2" rowspan="3">supply</th>
-  -->
-    <th colspan="1" rowspan="2">nutrition</th>
-    <th colspan="2" rowspan="2">％</th>
-    <th colspan="2" rowspan="2">need</th>
-    <th colspan="2" rowspan="2">supply</th>
+    <% @currentFoods.each do |food| %>
+      <th colspan="2">
+      <%= button_tag '×', type: 'button',  :onClick => ("submitWithValue('updateForm','delete#{food.id}');") %>
+      </th>
+    <% end %>
+</tr>
+<tr>
 <% @currentFoods.each do |food| %>
-    <th colspan="2" rowspan="1"><%= food.name%></th>
-<% end %>
-  </tr>
-<!--
-食材別に単位を設けたい
-  <tr>
+      <th colspan="2"><%= food.name%></th>
+  <% end %>
+</tr>
+<tr>
 <% @currentFoods.each do |food| %>
-    <td>1</td>
-    <td><%= food.unit%></td>
-<% end %>
-  </tr>
--->
-  <tr>
-<% @currentFoods.each do |food| %>
-  <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
+ <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
     <td><%= number_field_tag 'quantities[]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100</td>
     <td>g</td>
 <% end %>

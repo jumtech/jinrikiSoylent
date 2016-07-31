@@ -52,10 +52,17 @@ class CalcNutritionController < ApplicationController
 
     quantities = params["quantities"]
 
+    deletedFoodId = params[:commit_value].gsub(/delete/, "")
+
     currentFoodIds = params["form"]["currentFoodIds"]
     if currentFoodIds == nil
       currentFoodIds = []
+    elsif currentFoodIds.kind_of?(String)
+      currentFoodIds = [currentFoodIds]
     end
+
+    # 食材を削除
+    currentFoodIds.delete(deletedFoodId)
 
     # 現在の食材を用意
     @currentFoods = []
@@ -88,12 +95,15 @@ class CalcNutritionController < ApplicationController
     end
 
     # DEBUG
+    commit_value =
     @consoles = [
       "@term=#{@term}",
       "@percent=#{@percent}",
       "quantities=#{quantities}",
       "currentFoodIds=#{currentFoodIds}",
-      "@currentFoods=#{@currentFoods}"
+      "@currentFoods=#{@currentFoods}",
+      "params[:commit_value]=#{params[:commit_value]}",
+      "deletedFoodId=#{deletedFoodId}"
     ]
     common()
   end
