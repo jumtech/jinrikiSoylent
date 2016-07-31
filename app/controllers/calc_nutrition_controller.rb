@@ -1,31 +1,16 @@
 class CalcNutritionController < ApplicationController
-
-  def common()
-    @needs = []
-    @supplies = []
-    @status = []
-    @nutrients.each.with_index(0) do |nutrient, i|
-      need = nutrient.quantity * @term.to_i * @percent.to_i / 100
-      @needs << need.round(1)
-       supply = 0
-      @currentFoods.each do |food|
-        supply += food.getNutrition(i) * food.quantity
-      end
-      @supplies <<  supply.round(1)
-      if need >  supply
-        @status << "shortage"
-      else
-        @status << "enough"
-      end
-    end
-  end
+  MAX_TERM = 14
+  DEFAULT_TERM = 5
+  MAX_PERCENT = 100
+  DEFAULT_PERCENT = 100
+  DEFAULT_QUANTITY = 1
 
   def show
     @nutrients = Nutrient.all
     @foods = Food.all
     @currentFoods = []
-    @term = 5
-    @percent = 100
+    @term = DEFAULT_TERM
+    @percent = DEFAULT_PERCENT
     common()
   end
 
@@ -37,12 +22,12 @@ class CalcNutritionController < ApplicationController
     # formからパラメタを取得
     @term = params["form"]["term"]
     if @term == nil
-      @term = 5
+      @term = DEFAULT_TERM
     end
 
     @percent = params["form"]["percent"]
     if @percent == nil
-      @percent = 100
+      @percent = DEFAULT_PERCENT
     end
 
     addedFoodId = params["form"]["addedFoodId"]
@@ -77,7 +62,7 @@ class CalcNutritionController < ApplicationController
     # 各食材のquantityをパラメタ値で設定
     if quantities == nil
       @currentFoods.each.with_index(0) do |food, i|
-        food.quantity = 1
+        food.quantity = DEFAULT_QUANTITY
       end
     else
       @currentFoods.each.with_index(0) do |food, i|
@@ -89,7 +74,7 @@ class CalcNutritionController < ApplicationController
     if addedFoodId != ""
       if !(currentFoodIds.include?(addedFoodId))
         addedFood = @foods.find(addedFoodId)
-        addedFood.quantity = 1
+        addedFood.quantity = DEFAULT_QUANTITY
         @currentFoods << addedFood
       end
     end
@@ -107,4 +92,37 @@ class CalcNutritionController < ApplicationController
     ]
     common()
   end
+
+  def common()
+    # 期間選択プルダウンの選択肢
+    @terms = {}
+    for t in 1..MAX_TERM do
+      @terms.store(t, t)
+    end
+
+    # ％選択プルダウンの選択肢
+    @percents = {}
+    10.step(MAX_PERCENT, 10) do |p|
+      @percents.store(p, p)
+    end
+
+    @needs = []
+    @supplies = []
+    @status = []
+    @nutrients.each.with_index(0) do |nutrient, i|
+      need = nutrient.quantity * @term.to_i * @percent.to_i / 100
+      @needs << need.round(1)
+       supply = 0
+      @currentFoods.each do |food|
+        supply += food.getNutrition(i) * food.quantity
+      end
+      @supplies <<  supply.round(1)
+      if need >  supply
+        @status << "shortage"
+      else
+        @status << "enough"
+      end
+    end
+  end
+
 end

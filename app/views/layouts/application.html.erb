@@ -15,12 +15,12 @@
 </h1>
 <!-- 目標設定 -->
 <p>
-  <%= select_tag 'form[term]', options_for_select([["１", 1], ["２", 2], ["３", 3], ["４", 4], ["５", 5], ["６", 6], ["７", 7], ["８", 8], ["９", 9], ["１０", 10]], :selected => @term, :id => 'hoge') %>
+  <%= select_tag 'form[term]', options_for_select(@terms, :selected => @term, :id => 'hoge') %>
   日間で
 </p>
 <p>
   必要な栄養素量の
-  <%= select_tag 'form[percent]', options_for_select([["１０", 10], ["２０", 20], ["３０", 30], ["４０", 40], ["５０", 50], ["６０", 60], ["７０", 70], ["８０", 80], ["９０", 90], ["１００", 100]], :selected => @percent) %>
+  <%= select_tag 'form[percent]', options_for_select(@percents, :selected => @percent) %>
   %を摂る
 </p>
 <%= submit_tag '目標を更新' %>
@@ -125,7 +125,7 @@
 <!-- 説明文 -->
 <h2>What is 人力そいれんと？</h2>
 <p>
-  『人力そいれんと』は、ソイレントと同じ栄養素量を普通の食材から摂ることを目的としたツールです。
+  『人力そいれんと』は、ソイレントと同じ栄養素量を普通の食材から摂ることを目的としたツールです
 </p>
 <h2>使い方</h2>
 <ol>
