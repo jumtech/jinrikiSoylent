@@ -74,10 +74,15 @@
   <tr>
     <td><%= nutrient.name %></td>
     <!-- ％ -->
+    <% if @needs[i] == 0 %>
+    <td></td>
+    <td></td>
+    <% else %>
     <td class="<%= @status[i]%>">
       <%= (@supplies[i] / @needs[i] * 100).to_i %>
     </td>
     <td>%</td>
+    <% end %>
     <!-- need -->
     <td><%= @needs[i] %></td>
     <td><%= nutrient.unit %></td>
