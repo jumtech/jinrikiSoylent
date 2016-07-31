@@ -71,10 +71,10 @@
       <tr>
       <% @currentFoods.each do |food| %>
       <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
-        <td>
+        <td class="figure">
           <%= number_field_tag 'form[quantities][]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100
         </td>
-        <td>g</td>
+        <td class="unit">g</td>
       <% end %>
     </tr>
     </thead>
@@ -87,8 +87,8 @@
         </td>
         <!-- ％ -->
         <% if @needs[i] == 0 %>
-        <td></td>
-        <td></td>
+        <td class="figure"></td>
+        <td class="unit"></td>
         <% else %>
         <td class="figure <%= @status[i]%>">
           <%= (@supplies[i] / @needs[i] * 100).to_i %>
