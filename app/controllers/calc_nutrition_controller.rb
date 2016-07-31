@@ -20,43 +20,36 @@ class CalcNutritionController < ApplicationController
     @foods = Food.all
 
     # formからパラメタを取得
-    @term = params["form"]["term"]
-    if @term == nil
+    if params["form"]
+      @term = params["form"]["term"]
+      @percent = params["form"]["percent"]
+      addedFoodId = params["form"]["addedFoodId"]
+      quantities = params["form"]["quantities"]
+      currentFoodIds = params["form"]["currentFoodIds"]
+      deletedFoodId = params["form"][:commit_value].gsub(/delete/, "")
+    else
       @term = DEFAULT_TERM
-    end
-
-    @percent = params["form"]["percent"]
-    if @percent == nil
       @percent = DEFAULT_PERCENT
-    end
-
-    addedFoodId = params["form"]["addedFoodId"]
-    if addedFoodId == nil
       addedFoodId = ""
+      quantities = nil
+      deletedFoodId = ""
     end
 
-    quantities = params["quantities"]
-
-    deletedFoodId = params[:commit_value].gsub(/delete/, "")
-
-    currentFoodIds = params["form"]["currentFoodIds"]
-    if currentFoodIds == nil
+    if !currentFoodIds
       currentFoodIds = []
     elsif currentFoodIds.kind_of?(String)
       currentFoodIds = [currentFoodIds]
     end
 
     # 食材を削除
-    currentFoodIds.delete(deletedFoodId)
+    if deletedFoodId != ""
+      currentFoodIds.delete(deletedFoodId)
+    end
 
     # 現在の食材を用意
     @currentFoods = []
-    if currentFoodIds.kind_of?(String)
-      @currentFoods << @foods.find(currentFoodIds)
-    else
-      currentFoodIds.each do |id|
-        @currentFoods << @foods.find(id)
-      end
+    currentFoodIds.each do |id|
+      @currentFoods << @foods.find(id)
     end
 
     # 各食材のquantityをパラメタ値で設定
@@ -79,17 +72,6 @@ class CalcNutritionController < ApplicationController
       end
     end
 
-    # DEBUG
-    commit_value =
-    @consoles = [
-      "@term=#{@term}",
-      "@percent=#{@percent}",
-      "quantities=#{quantities}",
-      "currentFoodIds=#{currentFoodIds}",
-      "@currentFoods=#{@currentFoods}",
-      "params[:commit_value]=#{params[:commit_value]}",
-      "deletedFoodId=#{deletedFoodId}"
-    ]
     common()
   end
 
@@ -106,13 +88,14 @@ class CalcNutritionController < ApplicationController
       @percents.store(p, p)
     end
 
+    # 表のデータ
     @needs = []
     @supplies = []
     @status = []
     @nutrients.each.with_index(0) do |nutrient, i|
       need = nutrient.quantity * @term.to_i * @percent.to_i / 100
       @needs << need.round(1)
-       supply = 0
+      supply = 0
       @currentFoods.each do |food|
         supply += food.getNutrition(i) * food.quantity
       end

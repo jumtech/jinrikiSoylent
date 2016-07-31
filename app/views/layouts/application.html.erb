@@ -8,14 +8,14 @@
 </head>
 <body>
 <%= form_tag "/calc_nutrition/update", id:"updateForm" do %>
-<%= hidden_field_tag "commit_value"%>
+<%= hidden_field_tag "form[commit_value]"%>
 <!-- タイトル -->
 <h1>
   <%= link_to '人力そいれんと', controller: 'calc_nutrition', action: 'show' %>
 </h1>
 <!-- 目標設定 -->
 <p>
-  <%= select_tag 'form[term]', options_for_select(@terms, :selected => @term, :id => 'hoge') %>
+  <%= select_tag 'form[term]', options_for_select(@terms, :selected => @term) %>
   日間で
 </p>
 <p>
@@ -35,6 +35,7 @@
 <hr>
 <!-- メインの表 -->
 <h2>Nutrition Facts</h2>
+<%= submit_tag "表を更新" %>
 <table border="2" rules="groups">
   <!-- 列のグループ(span)、属性を設定 -->
   <colgroup></colgroup>
@@ -70,7 +71,7 @@
     <% @currentFoods.each do |food| %>
     <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
       <td>
-        <%= number_field_tag 'quantities[]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100
+        <%= number_field_tag 'form[quantities][]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100
       </td>
       <td>g</td>
     <% end %>
@@ -119,9 +120,7 @@
   <% end %>
   </tbody>
 </table>
-<%= submit_tag "食材の量を反映" %>
 <% end %>
-<hr>
 <!-- 説明文 -->
 <h2>What is 人力そいれんと？</h2>
 <p>
