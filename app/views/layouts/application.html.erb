@@ -11,7 +11,7 @@
 <%= hidden_field_tag "form[commit_value]"%>
 <!-- タイトル -->
 <h1>
-  <%= link_to '人力そいれんと', controller: 'calc_nutrition', action: 'show' %>
+  <%= link_to "人力そいれんと", {controller: "calc_nutrition", action: "show"} , {id: "title"}%>
 </h1>
 <!-- 目標設定 -->
 <p>
@@ -36,90 +36,93 @@
 <!-- メインの表 -->
 <h2>Nutrition Facts</h2>
 <%= submit_tag "表を更新" %>
-<table border="2" rules="groups">
-  <!-- 列のグループ(span)、属性を設定 -->
-  <colgroup></colgroup>
-  <colgroup span="2"></colgroup>
-  <colgroup span="2"></colgroup>
-  <colgroup span="2"></colgroup>
-  <colgroup span="2"></colgroup>
-  <colgroup span="2"></colgroup>
-  <colgroup span="2"></colgroup>
-  <!-- 表のヘッダ -->
-  <thead>
-    <tr>
-      <th colspan="1" rowspan="3">nutrition</th>
-      <th colspan="2" rowspan="3">％</th>
-      <th colspan="2" rowspan="3">need</th>
-      <th colspan="2" rowspan="3">supply</th>
+<div id="tableDiv">
+  <table id="nutritionTable">
+    <!-- 列のグループ(span)、属性を設定 -->
+    <colgroup id="nutritionCol"></colgroup>
+    <colgroup id="percentCol" span="2"></colgroup>
+    <colgroup id="needCol" span="2"></colgroup>
+    <colgroup id="supplyCol" span="2"></colgroup>
+    <% @currentFoods.each do |food| %>
+    <colgroup class="foodCol" span="2"></colgroup>
+    <% end %>
+    <!-- 表のヘッダ -->
+    <thead>
+      <tr>
+        <th class="nutrition" colspan="1" rowspan="3">nutrition</th>
+        <th class="percent" colspan="2" rowspan="3">％</th>
+        <th class="need" colspan="2" rowspan="3">need</th>
+        <th class="supply" colspan="2" rowspan="3">supply</th>
+        <% @currentFoods.each do |food| %>
+          <th class="food" colspan="2">
+            <%= button_tag '×',
+            type: 'button',
+            :onClick =>("submitWithValue('updateForm','delete#{food.id}');") %>
+          </th>
+        <% end %>
+      </tr>
+      <tr>
       <% @currentFoods.each do |food| %>
-        <th colspan="2">
-          <%= button_tag '×',
-          type: 'button',
-          :onClick =>("submitWithValue('updateForm','delete#{food.id}');") %>
+        <th class="food" colspan="2">
+          <%= food.name%>
         </th>
       <% end %>
-    </tr>
-    <tr>
-    <% @currentFoods.each do |food| %>
-      <th colspan="2">
-        <%= food.name%>
-      </th>
-    <% end %>
-    </tr>
-    <tr>
-    <% @currentFoods.each do |food| %>
-    <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
-      <td>
-        <%= number_field_tag 'form[quantities][]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100
-      </td>
-      <td>g</td>
-    <% end %>
-  </tr>
-  </thead>
-  <!-- 表のボディ -->
-  <tbody>
-  <% @nutrients.each.with_index(0) do |nutrient, i| %>
-    <tr>
-      <td>
-        <%= nutrient.name %>
-      </td>
-      <!-- ％ -->
-      <% if @needs[i] == 0 %>
-      <td></td>
-      <td></td>
-      <% else %>
-      <td class="<%= @status[i]%>">
-        <%= (@supplies[i] / @needs[i] * 100).to_i %>
-      </td>
-      <td>%</td>
-      <% end %>
-      <!-- need -->
-      <td>
-        <%= @needs[i] %>
-      </td>
-      <td>
-        <%= nutrient.unit %>
-      </td>
-      <!-- supply -->
-      <td>
-        <%= @supplies[i]%>
-      </td>
-      <td>
-        <%= nutrient.unit %>
-      </td>
-      <% @currentFoods.each.with_index(0) do |food, j| %>
-      <td>
-        <%= (food.getNutrition(i) * food.quantity).round(1) %>
-      </td>
-      <td>
-        <%= nutrient.unit %>
-      </td>
+      </tr>
+      <tr>
+      <% @currentFoods.each do |food| %>
+      <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
+        <td>
+          <%= number_field_tag 'form[quantities][]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100
+        </td>
+        <td>g</td>
       <% end %>
     </tr>
-  <% end %>
-  </tbody>
-</table>
+    </thead>
+    <!-- 表のボディ -->
+    <tbody>
+    <% @nutrients.each.with_index(0) do |nutrient, i| %>
+      <tr>
+        <td class="name">
+          <%= nutrient.name %>
+        </td>
+        <!-- ％ -->
+        <% if @needs[i] == 0 %>
+        <td></td>
+        <td></td>
+        <% else %>
+        <td class="figure <%= @status[i]%>">
+          <%= (@supplies[i] / @needs[i] * 100).to_i %>
+        </td>
+        <td class="unit">%</td>
+        <% end %>
+        <!-- need -->
+        <td class="figure">
+          <%= @needs[i] %>
+        </td>
+        <td class="unit">
+          <%= nutrient.unit %>
+        </td>
+        <!-- supply -->
+        <td class="figure">
+          <%= @supplies[i]%>
+        </td>
+        <td class="unit">
+          <%= nutrient.unit %>
+        </td>
+        <!-- 各食材情報 -->
+        <% @currentFoods.each.with_index(0) do |food, j| %>
+        <td class="figure">
+          <%= (food.getNutrition(i) * food.quantity).round(1) %>
+        </td>
+        <td class="unit">
+          <%= nutrient.unit %>
+        </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
 <% end %>
 <!-- 説明文 -->
 <h2>What is 人力そいれんと？</h2>
