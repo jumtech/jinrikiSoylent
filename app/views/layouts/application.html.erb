@@ -7,10 +7,12 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <!-- タイトル -->
-<h1><%= link_to '人力そいれんと', controller: 'calc_nutrition', action: 'show' %></h1>
 <%= form_tag "/calc_nutrition/update", id:"updateForm" do %>
 <%= hidden_field_tag "commit_value"%>
+<!-- タイトル -->
+<h1>
+  <%= link_to '人力そいれんと', controller: 'calc_nutrition', action: 'show' %>
+</h1>
 <!-- 目標設定 -->
 <p>
   <%= select_tag 'form[term]', options_for_select([["１", 1], ["２", 2], ["３", 3], ["４", 4], ["５", 5], ["６", 6], ["７", 7], ["８", 8], ["９", 9], ["１０", 10]], :selected => @term, :id => 'hoge') %>
@@ -35,86 +37,121 @@
 <h2>Nutrition Facts</h2>
 <table border="2" rules="groups">
   <!-- 列のグループ(span)、属性を設定 -->
-<colgroup></colgroup>
-<colgroup span="2"></colgroup>
-<colgroup span="2"></colgroup>
-<colgroup span="2"></colgroup>
-<colgroup span="2"></colgroup>
-<colgroup span="2"></colgroup>
-<colgroup span="2"></colgroup>
+  <colgroup></colgroup>
+  <colgroup span="2"></colgroup>
+  <colgroup span="2"></colgroup>
+  <colgroup span="2"></colgroup>
+  <colgroup span="2"></colgroup>
+  <colgroup span="2"></colgroup>
+  <colgroup span="2"></colgroup>
   <!-- 表のヘッダ -->
-<thead>
-  <tr>
-    <th colspan="1" rowspan="3">nutrition</th>
-    <th colspan="2" rowspan="3">％</th>
-    <th colspan="2" rowspan="3">need</th>
-    <th colspan="2" rowspan="3">supply</th>
+  <thead>
+    <tr>
+      <th colspan="1" rowspan="3">nutrition</th>
+      <th colspan="2" rowspan="3">％</th>
+      <th colspan="2" rowspan="3">need</th>
+      <th colspan="2" rowspan="3">supply</th>
+      <% @currentFoods.each do |food| %>
+        <th colspan="2">
+          <%= button_tag '×',
+          type: 'button',
+          :onClick =>("submitWithValue('updateForm','delete#{food.id}');") %>
+        </th>
+      <% end %>
+    </tr>
+    <tr>
     <% @currentFoods.each do |food| %>
       <th colspan="2">
-      <%= button_tag '×', type: 'button',  :onClick => ("submitWithValue('updateForm','delete#{food.id}');") %>
+        <%= food.name%>
       </th>
     <% end %>
-</tr>
-<tr>
-<% @currentFoods.each do |food| %>
-      <th colspan="2"><%= food.name%></th>
-  <% end %>
-</tr>
-<tr>
-<% @currentFoods.each do |food| %>
- <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
-    <td><%= number_field_tag 'quantities[]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100</td>
-    <td>g</td>
-<% end %>
-  </tr>
-</thead>
-  <!-- 表のボディ -->
-<tbody>
-<% @nutrients.each.with_index(0) do |nutrient, i| %>
-  <tr>
-    <td><%= nutrient.name %></td>
-    <!-- ％ -->
-    <% if @needs[i] == 0 %>
-    <td></td>
-    <td></td>
-    <% else %>
-    <td class="<%= @status[i]%>">
-      <%= (@supplies[i] / @needs[i] * 100).to_i %>
-    </td>
-    <td>%</td>
+    </tr>
+    <tr>
+    <% @currentFoods.each do |food| %>
+    <%= hidden_field_tag "form[currentFoodIds][]", "#{food.id}"%>
+      <td>
+        <%= number_field_tag 'quantities[]', '1', min:0, max:50, step: 0.1, value: "#{food.quantity}"%>×100
+      </td>
+      <td>g</td>
     <% end %>
-    <!-- need -->
-    <td><%= @needs[i] %></td>
-    <td><%= nutrient.unit %></td>
-    <!-- supply -->
-    <td><%= @supplies[i]%></td>
-    <td><%= nutrient.unit %></td>
-<% @currentFoods.each.with_index(0) do |food, j| %>
-    <td>
-      <%= (food.getNutrition(i) * food.quantity).round(1) %>
-    </td>
-    <td><%= nutrient.unit %></td>
-<% end %>
   </tr>
-<% end %>
-</tbody>
+  </thead>
+  <!-- 表のボディ -->
+  <tbody>
+  <% @nutrients.each.with_index(0) do |nutrient, i| %>
+    <tr>
+      <td>
+        <%= nutrient.name %>
+      </td>
+      <!-- ％ -->
+      <% if @needs[i] == 0 %>
+      <td></td>
+      <td></td>
+      <% else %>
+      <td class="<%= @status[i]%>">
+        <%= (@supplies[i] / @needs[i] * 100).to_i %>
+      </td>
+      <td>%</td>
+      <% end %>
+      <!-- need -->
+      <td>
+        <%= @needs[i] %>
+      </td>
+      <td>
+        <%= nutrient.unit %>
+      </td>
+      <!-- supply -->
+      <td>
+        <%= @supplies[i]%>
+      </td>
+      <td>
+        <%= nutrient.unit %>
+      </td>
+      <% @currentFoods.each.with_index(0) do |food, j| %>
+      <td>
+        <%= (food.getNutrition(i) * food.quantity).round(1) %>
+      </td>
+      <td>
+        <%= nutrient.unit %>
+      </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
 </table>
 <%= submit_tag "食材の量を反映" %>
 <% end %>
 <hr>
 <!-- 説明文 -->
 <h2>What is 人力そいれんと？</h2>
-<p>『人力そいれんと』は、ソイレントと同じ栄養素量を普通の食材から摂ることを目的としたツールです。</p>
+<p>
+  『人力そいれんと』は、ソイレントと同じ栄養素量を普通の食材から摂ることを目的としたツールです。
+</p>
 <h2>使い方</h2>
 <ol>
-  <li>ソイレント何日分×何％分の栄養素量を摂りたいかを選びます</li>
-  <li>食材の種類と量を選びます</li>
-  <li>更新ボタンを押します</li>
-  <li>栄養素ごとに、必要量（need）と、選んだ食材からの供給量（supply）が表示されます</li>
-  <li>needに対するsupplyの割合が、％欄に表示されます</li>
-  <li>100％に満たない栄養素は、赤く表示されます</li>
-  <li>すべての栄養素を100%（青表示）にするように、食材の量を加減します</li>
+  <li>
+    ソイレント何日分×何％分の栄養素量を摂りたいかを選びます
+  </li>
+  <li>
+    食材の種類と量を選びます
+  </li>
+  <li>
+    更新ボタンを押します
+  </li>
+  <li>
+    栄養素ごとに、必要量（need）と、選んだ食材からの供給量（supply）が表示されます
+  </li>
+  <li>
+    needに対するsupplyの割合が、％欄に表示されます
+  </li>
+  <li>
+    100％に満たない栄養素は、赤く表示されます
+  </li>
+  <li>
+    すべての栄養素を100%（青表示）にするように、食材の量を加減します
+  </li>
 </ol>
+
 <h2>使い方のヒント</h2>
 <h3>何日分にするか？</h3>
 <ul>
@@ -146,6 +183,37 @@
     足りない栄養素量を補うための食材は、
     <%= link_to "簡単！栄養andカロリー計算（外部サイト）", "http://www.eiyoukeisan.com/"%>
     を利用して探します。栄養素別の食材ランキングが掲載されています
+  </li>
+</ul>
+<h2>データソース</h2>
+<h3>
+  <%= link_to "日本食品標準成分表2015年版（七訂）：文部科学省", "http://www.mext.go.jp/a_menu/syokuhinseibun/1365297.htm"%>
+</h3>
+<ul>
+  <li>
+    各食材に含まれる栄養素量
+  </li>
+  <li>
+    ビタミンAはレチノール活性当量、ビタミンEはα-トコフェノール量で算出
+  </li>
+</ul>
+<h3>
+  <%= link_to "Soylent Powder(1.6) Nutrition Facts", "http://files.soylent.com/pdf/soylent-nutrition-facts-1-6-en.pdf"%>
+</h3>
+<ul>
+  <li>
+    ソイレントに含まれる栄養素量
+  </li>
+</ul>
+<h3>
+  <%= link_to "Guidance for Industry: A Food Labeling Guide | FDA", "http://www.fda.gov/Food/GuidanceRegulation/GuidanceDocumentsRegulatoryInformation/LabelingNutrition/ucm064928.htm"%>
+</h3>
+<ul>
+  <li>
+    NutritionFactに％表記されたDaily Valueの絶対量
+  </li>
+  <li>
+    1IUは、ビタミンA：0.3μg、ビタミンD：0.025μg、ビタミンE：0.67mgで計算
   </li>
 </ul>
 </body>
