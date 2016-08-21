@@ -97,7 +97,7 @@ class CalcNutritionController < ApplicationController
       @needs << need.round(1)
       supply = 0
       @currentFoods.each do |food|
-        supply += food.getNutrition(i) * food.quantity
+        supply += food.getNutrient(i).to_f * food.quantity
       end
       @supplies <<  supply.round(1)
       if need >  supply

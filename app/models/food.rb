@@ -1,5 +1,49 @@
 class Food < ActiveRecord::Base
-  def getNutrition(i)
+  ATTRIBUTES = [
+    "category",
+    "name",
+    "calories",
+    "protein",
+    "totalFat",
+    "saturatedFat",
+    "polyunsaturatedFat",
+    "monounsaturatedFat",
+    "cholesterol",
+    "totalCarbohydrate",
+    "dietaryFiber",
+    "solubleFiber",
+    "sodium",
+    "potassium",
+    "calcium",
+    "magnesium",
+    "iron",
+    "zinc",
+    "copper",
+    "manganese",
+    "iodine",
+    "selenium",
+    "chromium",
+    "molybdenum",
+    "vitaminA",
+    "vitaminD",
+    "vitaminE",
+    "vitaminK",
+    "thiamin",
+    "riboflavin",
+    "niacin",
+    "vitaminB6",
+    "vitaminB12",
+    "folate",
+    "vitaminB5",
+    "biotin",
+    "vitaminC"
+  ]
+
+  def self.getAttributes()
+    return ATTRIBUTES;
+  end
+
+  def getNutrient(i)
     case i
     when 0 then
       return calories

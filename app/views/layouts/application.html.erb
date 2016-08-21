@@ -112,7 +112,7 @@
         <!-- 各食材情報 -->
         <% @currentFoods.each.with_index(0) do |food, j| %>
         <td class="figure">
-          <%= (food.getNutrition(i) * food.quantity).round(1) %>
+          <%= (food.getNutrient(i) * food.quantity).round(1) %>
         </td>
         <td class="unit">
           <%= nutrient.unit %>

@@ -11,11 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160731061547) do
+ActiveRecord::Schema.define(version: 20160821053225) do
 
   create_table "foods", force: :cascade do |t|
     t.string   "name",               limit: 255
-    t.string   "unit",               limit: 255
     t.float    "calories",           limit: 24
     t.float    "totalFat",           limit: 24
     t.float    "totalCarbohydrate",  limit: 24
@@ -54,6 +53,7 @@ ActiveRecord::Schema.define(version: 20160731061547) do
     t.float    "vitaminB5",          limit: 24
     t.float    "biotin",             limit: 24
     t.float    "vitaminC",           limit: 24
+    t.string   "category",           limit: 255
   end
 
   create_table "nutrients", force: :cascade do |t|
